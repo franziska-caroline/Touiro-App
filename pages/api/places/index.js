@@ -9,7 +9,17 @@ export default async function handler(request, response) {
     const places = await Place.find();
     console.log("places: ", places);
     return response.status(200).json(places);
-  } else {
-    return response.status(405).json({ message: "method not allowed" });
+  }
+
+  if (request.method === "POST") {
+    try {
+      const placeData = request.body;
+      await Place.create(placeData);
+
+      response.status(201).json({ status: "Place created" });
+    } catch (error) {
+      console.log(error);
+      response.status(400).json({ error: error.message });
+    }
   }
 }
